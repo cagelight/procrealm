@@ -6,9 +6,11 @@
 #include <pthread.h>
 #include <stdatomic.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 #include <time.h>
 
+#define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 
 #define thread_local _Thread_local

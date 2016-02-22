@@ -3,9 +3,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-//================================================================
-
-
 static pthread_mutex_t prntmut;
 void com_print(char const * str) {
 	pthread_mutex_lock(&prntmut);

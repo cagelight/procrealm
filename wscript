@@ -46,6 +46,8 @@ def configure(ctx):
 #	ctx.check_cfg(package="libpng", uselib_store='USEPNG', args=['--cflags', '--libs'])
 	ctx.check(features='c cprogram', lib='pthread', uselib_store='PTHREAD')
 	ctx.check(features='c cprogram', lib='glfw', uselib_store='GLFW')
+	ctx.check(features='c cprogram', lib='GL', uselib_store='GL')
+	ctx.check(features='c cprogram', lib='GLEW', uselib_store='GLEW')
 	btup = ctx.options.build_type.upper()
 	if btup in ["DEBUG", "NATIVE", "RELEASE"]:
 		Logs.pprint("PINK", "Setting up environment for known build type: " + btup)
@@ -61,7 +63,7 @@ def build(bld):
 		target = coreprog_name,
 		source = bld.path.ant_glob('src/*.c'),
 		lib = ['m'],
-		uselib = ['PTHREAD', 'GLFW']
+		uselib = ['PTHREAD', 'GLFW', 'GL', 'GLEW']
 	)
 	
 def clean(ctx):

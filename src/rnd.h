@@ -3,6 +3,8 @@
 
 #include "com.h"
 
+#include <GL/glew.h>
+
 extern pthread_t rnd_thrd;
 extern com_thrd_status_ta rnd_thrd_status;
 extern char rnd_thrd_err [COM_THRD_ERRLEN];
