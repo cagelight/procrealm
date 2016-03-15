@@ -11,10 +11,7 @@ static void catch_interrupt (int sig) {
 
 int main() {
 	signal(SIGINT, catch_interrupt);
-	int status = com_init();
-	if (status) {
-		com_printf("initialization failed: code %i\n", status);
-		return status;
-	}
-	return com_run();
+	com_init();
+	com_run();
+	return 0;
 }

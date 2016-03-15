@@ -4,11 +4,11 @@
 #include "com.h"
 
 extern pthread_t inp_thrd;
-extern com_thrd_status_ta inp_thrd_status;
-extern char inp_thrd_err [COM_THRD_ERRLEN];
+extern thrd_status_ta inp_thrd_status;
+extern char inp_thrd_err [THRD_ERRLEN];
 #define INPSTAT atomic_load(&inp_thrd_status)
-#define INPEXIT atomic_store(&inp_thrd_status, COM_THRD_STATUS_EXIT_NORMAL); pthread_exit(NULL);
-#define INPEXER(err) strncpy(inp_thrd_err, err, COM_THRD_ERRLEN); atomic_store(&inp_thrd_status, COM_THRD_STATUS_EXIT_ERROR); pthread_exit(NULL);
+#define INPEXIT atomic_store(&inp_thrd_status, THRD_STATUS_EXIT_NORMAL); pthread_exit(NULL);
+#define INPEXER(err) strncpy(inp_thrd_err, err, THRD_ERRLEN); atomic_store(&inp_thrd_status, THRD_STATUS_EXIT_ERROR); pthread_exit(NULL);
 
 enum inp_keystate_e {
 	INP_KEYINACTIVE = 1<<0,
@@ -19,16 +19,23 @@ enum inp_keystate_e {
 
 typedef int_fast8_t inp_keystate_t;
 
+typedef struct inp_keystuff_s {
+	char const * name;
+	int glfwkey;
+	inp_keystate_t state;
+	double time;
+} inp_keystuff_t;
+
 typedef struct inp_keyset_s {
 #define XKEYSET_STRUCTDEF
 #include "inp_xkeyset.h"
 #undef XKEYSET_STRUCTDEF
 } inp_keyset_t;
 
-void inp_keyset_init(inp_keyset_t *);
-void inp_keyset_ipd(inp_keyset_t *);
+#define KEYTIME(keyset, keychar) keyset->th_##keychar 
 
-#define KEYPORH(keyset, keychar) ((keyset)->keychar & (INP_KEYPRESSED | INP_KEYHELD)) 
+void inp_keyset_init(inp_keyset_t *);
+void inp_keyset_ipd(inp_keyset_t *, timekeeper_t *);
 
 int inp_init();
 
