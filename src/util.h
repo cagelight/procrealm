@@ -8,6 +8,10 @@
 #define thread_local _Thread_local
 #define atomic _Atomic
 
+#define bool int
+#define true 1
+#define false 0
+
 char * vas(char const * fmt, ...);
 
 #define MILLI 1000

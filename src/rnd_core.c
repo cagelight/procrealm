@@ -4,11 +4,30 @@ pthread_t rnd_thrd;
 thrd_status_ta rnd_thrd_status;
 char rnd_thrd_err [THRD_ERRLEN];
 
+static int current_width, current_height;
+static int target_width, target_height;
+
 //================================================================
 
 static void rnd_frame() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	glUseProgram(shprog_basic);
+	
+	vec3d eye, up, center;
+	vec3_set(eye, 3, 3, 3);
+	vec3_set(up, 0, 0, 1);
+	vec3_set(center, 0, 0, 0);
+	mat4f view;
+	mat4_lookat(eye, center, up, view);
+	
+	mat4f proj;
+	mat4_project_perspective(1.5, (double)current_width, (double)current_height, 0.1, 100.0, proj);
+	
+	mat4f trans;
+	mat4_mult_mat4(view, proj, trans);
+	
+	glUniformMatrix4fv(glGetUniformLocation(shprog_basic, "trans"), 1, GL_FALSE, &trans[0][0]);
+	
 	glBindVertexArray(cube_up_vao);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 }
@@ -28,9 +47,6 @@ static void rnd_glinit() {
 }
 
 //================================================================
-
-static int current_width, current_height;
-static int target_width, target_height;
 
 static void * rnd_run(void * arg) {
 	assert(arg == NULL);

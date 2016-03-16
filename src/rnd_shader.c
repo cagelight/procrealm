@@ -8,8 +8,9 @@ static char const * sh_basic_vertex_source =
 " \
 #version 450 core \n \
 layout(location = 0) in vec3 pos; \
+uniform mat4 trans;\
 void main () { \
-	gl_Position = vec4(pos, 1); \
+	gl_Position = trans * vec4(pos, 1); \
 } \
 ";
 
@@ -22,35 +23,37 @@ void main () { \
 } \
 ";
 
-static GLint rnd_compile_shader(GLuint shader, char const * src) {
+static bool rnd_compile_shader(GLuint shader, char const * src) {
 	GLint success;
 	glShaderSource(shader, 1, &src, 0);
 	glCompileShader(shader);
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success) {
+	if (success == GL_FALSE) {
 		GLint maxLength = 0;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &maxLength);
 		GLchar * info_log = (GLchar *)malloc(maxLength);
 		glGetShaderInfoLog(shader, maxLength, &maxLength, info_log);
 		com_printf_error("shader failed to compile: \n%s", info_log);
 		free(info_log);
+		return false;
 	}
-	return success;
+	return true;
 }
 
-static GLint rnd_link_shader_program(GLuint shprog) {
+static bool rnd_link_shader_program(GLuint shprog) {
 	GLint success;
 	glLinkProgram(shprog);
 	glGetProgramiv(shprog, GL_LINK_STATUS, &success);
-	if (!success) {
+	if (success == GL_FALSE) {
 		GLint maxLength = 0;
 		glGetProgramiv(shprog, GL_INFO_LOG_LENGTH, &maxLength);
 		GLchar * info_log = (GLchar *)malloc(maxLength);
 		glGetProgramInfoLog(shprog, maxLength, &maxLength, info_log);
 		com_printf_error("program failed to link: \n%s", info_log);
 		free(info_log);
+		return false;
 	}
-	return success;
+	return true;
 }
 
 void rnd_shader_init() {
